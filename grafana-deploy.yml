@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: abhigrafana
+  labels:
+    app: abhigrafana
+spec:
+  selector:
+    app: abhigrafana
+  type: NodePort
+  ports:
+  - port: 3000
+    targetPort: 3000
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: abhigrafana
+  labels:
+    app: abhigrafana
+spec:
+  selector:
+    matchLabels:
+      app: abhigrafana
+  replicas: 1
+  template:
+    metadata:
+      name: abhigrafana-pod
+      labels:
+        app: abhigrafana
+    spec:
+      containers:
+      - name: abhigrafana-container
+        image: vimal13/grafana
+        volumeMounts:
+        - name: grafana-storage-volume
+          mountPath: /var/lib/grafana
+      volumes:
+      - name: grafana-storage-volume
+        persistentVolumeClaim:
+          claimName: pvc-grafana
